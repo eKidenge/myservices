@@ -21,7 +21,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="{% url 'main:home' %}">
-                <i class="fas fa-cogs"></i> My Services
+                <i class="fas fa-cogs"></i> THE TECH TIMES
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -29,7 +29,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'main:home' %}">Home</a>
+                        <a class="nav-link" href="{% url 'main:home' %}">Latest</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:about' %}">Startups</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:about' %}">News</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:about' %}">Politics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:about' %}">AI</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:about' %}">About</a>
@@ -42,6 +54,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'contact:form' %}">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog:list' %}">Interesting Reads</a>
                     </li>
                 </ul>
             </div>
@@ -58,8 +73,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
-                    <h5>My Services</h5>
-                    <p>Providing quality services since 2024</p>
+                    <h5>Techies Kenya</h5>
+                    <p>Providing quality services since {% now "Y" %}</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Quick Links</h5>
@@ -81,7 +96,7 @@
             </div>
             <hr>
             <div class="text-center">
-                <p>&copy; {% now "Y" %} My Services. All rights reserved.</p>
+                <p>&copy; {% now "Y" %} The Tech-Kenya. All rights reserved.</p>
             </div>
         </div>
     </footer>
