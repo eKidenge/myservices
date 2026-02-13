@@ -1,0 +1,220 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Blog - My Services{% endblock %}
+
+{% block content %}
+<!-- Blog Header -->
+<section class="blog-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="display-4">Our Blog</h1>
+                <p class="lead">Insights, updates, and articles from our team</p>
+            </div>
+            <div class="col-md-4">
+                <!-- Search Form -->
+                <form method="get" class="mt-4 mt-md-0">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control" placeholder="Search blog..." value="{{ search_query }}">
+                        <button class="btn btn-light" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Posts -->
+{% if featured_posts %}
+<section class="featured-posts py-4 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Featured Posts</h2>
+        <div class="row">
+            {% for post in featured_posts %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if post.featured_image %}
+                    <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-primary mb-2">Featured</span>
+                        {% if post.category %}
+                        <span class="badge bg-secondary mb-2">{{ post.category.name }}</span>
+                        {% endif %}
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">{{ post.excerpt|truncatewords:20 }}</p>
+                        <a href="{% url 'blog:detail' post.slug %}" class="btn btn-primary">Read More</a>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <small>
+                            <i class="fas fa-user me-1"></i> {{ post.author.get_full_name|default:post.author.username }}
+                            <i class="fas fa-calendar ms-2 me-1"></i> {{ post.published_at|date:"M d, Y" }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Main Blog Content -->
+<section class="blog-content py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Blog Posts -->
+            <div class="col-lg-8">
+                <!-- Category Filter -->
+                <div class="category-filter mb-4">
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'blog:list' %}" class="btn {% if not current_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            All Posts
+                        </a>
+                        {% for category in categories %}
+                        <a href="{% url 'blog:list' %}?category={{ category.slug }}" 
+                           class="btn {% if current_category == category.slug %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            {{ category.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                {% if search_query %}
+                <div class="alert alert-info">
+                    Showing results for: "{{ search_query }}"
+                </div>
+                {% endif %}
+                
+                {% if current_tag %}
+                <div class="alert alert-info">
+                    Showing posts tagged with: "{{ current_tag }}"
+                </div>
+                {% endif %}
+                
+                <!-- Posts List -->
+                {% for post in posts %}
+                <article class="card mb-4">
+                    <div class="row g-0">
+                        {% if post.featured_image %}
+                        <div class="col-md-4">
+                            <img src="{{ post.featured_image.url }}" class="img-fluid rounded-start h-100" alt="{{ post.title }}" style="object-fit: cover;">
+                        </div>
+                        {% endif %}
+                        <div class="{% if post.featured_image %}col-md-8{% else %}col-12{% endif %}">
+                            <div class="card-body">
+                                <h2 class="card-title h4">
+                                    <a href="{% url 'blog:detail' post.slug %}" class="text-decoration-none">{{ post.title }}</a>
+                                </h2>
+                                <div class="post-meta mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-user me-1"></i> {{ post.author.get_full_name|default:post.author.username }}
+                                        <i class="fas fa-calendar ms-2 me-1"></i> {{ post.published_at|date:"F j, Y" }}
+                                        <i class="fas fa-folder ms-2 me-1"></i> 
+                                        {% if post.category %}
+                                        <a href="{% url 'blog:list' %}?category={{ post.category.slug }}" class="text-muted">{{ post.category.name }}</a>
+                                        {% else %}
+                                        Uncategorized
+                                        {% endif %}
+                                        <i class="fas fa-eye ms-2 me-1"></i> {{ post.views_count }} views
+                                    </small>
+                                </div>
+                                <p class="card-text">{{ post.excerpt }}</p>
+                                <a href="{% url 'blog:detail' post.slug %}" class="btn btn-primary">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h4>No posts found</h4>
+                    {% if search_query %}
+                    <p>Try adjusting your search criteria or browse all posts.</p>
+                    <a href="{% url 'blog:list' %}" class="btn btn-primary">View All Posts</a>
+                    {% else %}
+                    <p>Check back later for new content.</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}">
+                                Previous
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}">
+                                {{ num }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}">
+                                Next
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Categories Widget -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Categories</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            {% for category in categories %}
+                            <li class="mb-2">
+                                <a href="{% url 'blog:list' %}?category={{ category.slug }}" class="text-decoration-none">
+                                    {{ category.name }}
+                                </a>
+                                <span class="badge bg-secondary float-end">
+                                    {{ category.posts.count }}
+                                </span>
+                            </li>
+                            {% empty %}
+                            <li>No categories available</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Popular Tags Widget -->
+                {% if popular_tags %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Popular Tags</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for tag in popular_tags %}
+                        <a href="{% url 'blog:list' %}?tag={{ tag }}" class="btn btn-sm btn-outline-primary m-1">
+                            {{ tag }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

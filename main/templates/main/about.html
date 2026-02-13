@@ -1,0 +1,109 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}About Us - My Services{% endblock %}
+
+{% block content %}
+<!-- About Header -->
+<section class="about-header bg-primary text-white py-5">
+    <div class="container text-center">
+        <h1 class="display-4">About Us</h1>
+        <p class="lead">Learn more about our company and what we do</p>
+    </div>
+</section>
+
+<!-- About Content -->
+<section class="about-content py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2>Our Story</h2>
+                <p>We are a dedicated team of professionals committed to delivering exceptional services to our clients. With years of industry experience, we understand the unique challenges businesses face and provide tailored solutions to help them succeed.</p>
+                <p>Our approach combines innovative thinking with practical execution, ensuring that every project we undertake meets the highest standards of quality and delivers tangible results for our clients.</p>
+            </div>
+            <div class="col-lg-6">
+                <h2>Our Mission</h2>
+                <p>Our mission is to empower businesses with cutting-edge solutions that drive growth, efficiency, and success. We believe in building long-term partnerships with our clients, understanding their goals, and helping them achieve their full potential.</p>
+                <p>Founded in 2024, we have quickly established ourselves as a trusted provider of professional services. Our team brings together diverse expertise and a shared passion for excellence, working collaboratively to solve complex challenges and create value for our clients.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="team-section bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Our Team</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-user-circle fa-4x mb-3 text-primary"></i>
+                        <h5 class="card-title">SAMWEL ODHIAMBO</h5>
+                        <p class="text-muted">CEO & Founder</p>
+                        <p class="card-text">With over 15 years of experience in the industry.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-user-circle fa-4x mb-3 text-primary"></i>
+                        <h5 class="card-title">MRS. SAMWEL</h5>
+                        <p class="text-muted">Operations Manager</p>
+                        <p class="card-text">Ensuring smooth operations and customer satisfaction.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-user-circle fa-4x mb-3 text-primary"></i>
+                        <h5 class="card-title">Kidenge Elisha</h5>
+                        <p class="text-muted">Lead Developer</p>
+                        <p class="card-text">Expert in delivering high-quality technical solutions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+{% if testimonials %}
+<section class="testimonials py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">What Our Clients Say</h2>
+        <div class="row">
+            {% for testimonial in testimonials %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= testimonial.rating %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="far fa-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p class="card-text">"{{ testimonial.content }}"</p>
+                        <div class="d-flex align-items-center">
+                            {% if testimonial.author_image %}
+                            <img src="{{ testimonial.author_image.url }}" alt="{{ testimonial.author_name }}" class="rounded-circle me-2" width="50" height="50">
+                            {% endif %}
+                            <div>
+                                <h6 class="mb-0">{{ testimonial.author_name }}</h6>
+                                <small class="text-muted">{{ testimonial.author_position }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

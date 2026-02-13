@@ -1,0 +1,189 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} - My Services Blog{% endblock %}
+
+{% block meta %}
+{% if post.meta_title %}
+<meta name="title" content="{{ post.meta_title }}">
+{% endif %}
+{% if post.meta_description %}
+<meta name="description" content="{{ post.meta_description }}">
+{% endif %}
+{% if post.meta_keywords %}
+<meta name="keywords" content="{{ post.meta_keywords }}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- Blog Post Header -->
+<section class="post-header bg-primary text-white py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'main:home' %}" class="text-white">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'blog:list' %}" class="text-white">Blog</a></li>
+                {% if post.category %}
+                <li class="breadcrumb-item"><a href="{% url 'blog:list' %}?category={{ post.category.slug }}" class="text-white">{{ post.category.name }}</a></li>
+                {% endif %}
+                <li class="breadcrumb-item active text-white" aria-current="page">{{ post.title|truncatechars:30 }}</li>
+            </ol>
+        </nav>
+        <h1 class="display-4">{{ post.title }}</h1>
+        <div class="post-meta">
+            <span class="me-3">
+                <i class="fas fa-user"></i> {{ post.author.get_full_name|default:post.author.username }}
+            </span>
+            <span class="me-3">
+                <i class="fas fa-calendar"></i> {{ post.published_at|date:"F j, Y" }}
+            </span>
+            <span class="me-3">
+                <i class="fas fa-folder"></i> 
+                {% if post.category %}
+                <a href="{% url 'blog:list' %}?category={{ post.category.slug }}" class="text-white">{{ post.category.name }}</a>
+                {% endif %}
+            </span>
+            <span>
+                <i class="fas fa-eye"></i> {{ post.views_count }} views
+            </span>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Post Content -->
+<section class="post-content py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" class="img-fluid rounded mb-4" alt="{{ post.title }}">
+                {% endif %}
+                
+                <article class="post-body">
+                    {{ post.content|linebreaks }}
+                </article>
+                
+                <!-- Tags -->
+                {% with tags=post.get_tags_list %}
+                {% if tags %}
+                <div class="post-tags mt-4">
+                    <h5>Tags:</h5>
+                    {% for tag in tags %}
+                    <a href="{% url 'blog:list' %}?tag={{ tag }}" class="btn btn-sm btn-outline-primary m-1">
+                        {{ tag }}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+                
+                <!-- Share Buttons -->
+                <div class="share-buttons mt-5">
+                    <h5>Share this post:</h5>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="btn btn-primary" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(window.location.href),'facebook-share-dialog','width=626,height=436'); return false;">
+                            <i class="fab fa-facebook"></i> Facebook
+                        </a>
+                        <a href="#" class="btn btn-info" onclick="window.open('https://twitter.com/intent/tweet?text={{ post.title }}&url='+encodeURIComponent(window.location.href),'twitter-share-dialog','width=626,height=436'); return false;">
+                            <i class="fab fa-twitter"></i> Twitter
+                        </a>
+                        <a href="#" class="btn btn-success" onclick="window.open('https://api.whatsapp.com/send?text={{ post.title }} - ' + encodeURIComponent(window.location.href),'whatsapp-share-dialog','width=626,height=436'); return false;">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                        <a href="#" class="btn btn-secondary" onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(window.location.href),'linkedin-share-dialog','width=626,height=436'); return false;">
+                            <i class="fab fa-linkedin"></i> LinkedIn
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Post Navigation -->
+                <div class="post-navigation mt-5 d-flex justify-content-between">
+                    {% if previous_post %}
+                    <a href="{% url 'blog:detail' previous_post.slug %}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> Previous Post
+                    </a>
+                    {% endif %}
+                    {% if next_post %}
+                    <a href="{% url 'blog:detail' next_post.slug %}" class="btn btn-outline-primary ms-auto">
+                        Next Post <i class="fas fa-arrow-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Comments Section -->
+                {% if post.allow_comments %}
+                <div class="comments-section mt-5">
+                    <h3>Comments ({{ comments.count }})</h3>
+                    
+                    <!-- Existing Comments -->
+                    {% for comment in comments %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {{ comment.name }} 
+                                <small>{{ comment.created_at|date:"F j, Y" }}</small>
+                            </h6>
+                            <p class="card-text">{{ comment.comment }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No comments yet. Be the first to comment!</p>
+                    {% endfor %}
+                    
+                    <!-- Comment Form -->
+                    <div class="comment-form mt-4">
+                        <h4>Leave a Comment</h4>
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ comment_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Submit Comment</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Author Info -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">About the Author</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            <i class="fas fa-user-circle fa-4x mb-3 text-primary"></i>
+                            <h6>{{ post.author.get_full_name|default:post.author.username }}</h6>
+                            <p class="text-muted">Author</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Related Posts -->
+                {% if related_posts %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Related Posts</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for related in related_posts %}
+                        <div class="mb-3 pb-3 border-bottom">
+                            <h6><a href="{% url 'blog:detail' related.slug %}" class="text-decoration-none">{{ related.title }}</a></h6>
+                            <small class="text-muted">{{ related.published_at|date:"M d, Y" }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

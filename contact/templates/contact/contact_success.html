@@ -1,0 +1,33 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Message Sent - My Services{% endblock %}
+
+{% block content %}
+<!-- Success Page -->
+<section class="success-page py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <div class="card">
+                    <div class="card-body py-5">
+                        <i class="fas fa-check-circle text-success fa-5x mb-4"></i>
+                        <h2 class="mb-3">Thank You!</h2>
+                        <p class="lead mb-4">Your message has been sent successfully. We'll get back to you as soon as possible.</p>
+                        <hr>
+                        <p class="mb-4">In the meantime, feel free to browse our services or read our latest blog posts.</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{% url 'main:home' %}" class="btn btn-primary">
+                                <i class="fas fa-home me-2"></i>Go to Home
+                            </a>
+                            <a href="{% url 'services:list' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-cogs me-2"></i>View Services
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
