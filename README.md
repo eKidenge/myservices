@@ -1,5 +1,3 @@
-cat > README.md << 'EOF'
-
 # My Services Django Website
 
 A comprehensive Django-based services website with blog, contact form, and admin panel.
@@ -26,7 +24,6 @@ A comprehensive Django-based services website with blog, contact form, and admin
 
 Visit http://localhost:8000 to see the site
 Admin panel: http://localhost:8000/admin
-EOF
 
 git add README.md
 git commit -m "Add README"
